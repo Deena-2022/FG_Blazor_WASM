@@ -1,0 +1,497 @@
+﻿@page "/Leads"
+@layout CommonLayout
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@inject FG_Blazor_WASM.Client.services.ILeadRepository repo 
+
+@using FG_Blazor_WASM.Shared.Model
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LEADS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.0/css/dataTables.bootstrap5.min.css" />
+
+    <link href="~/Scripts/free-jqGrid/plugins/css/ui.multiselect.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+    <style>
+
+        body {
+            background-image: url('/Images/header-tile.png');
+            font-family: "Open Sans", sans-serif;
+            font-size: 13px !important;
+            width: 99%
+        }
+       @* .odd{
+            display:none;
+        }*@
+        .nav-link {
+            border-radius: 0px !important;
+        }
+
+            .nav-link small {
+                font-size: 10px;
+                color: rgb(90, 89, 89);
+            }
+
+            .nav-link:hover {
+                background-color: #52525240 !important
+            }
+
+            .nav-link .fa {
+                transition: all 1s;
+                font-size: 35px;
+                color: rgb(90, 89, 89);
+            }
+
+        .modal form {
+            color: #5c78bf;
+            font-size: 17px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 500
+        }
+
+        .modal h3 {
+            color: blueviolet
+        }
+    </style>
+</head>
+<body onload="TestDataTablesRemove('#example')">
+    <nav class="navbar navbar-expand-lg p-0" style="background-color: #388ED9;width:102%">
+        <a class="navbar-brand border-right " href="#">
+            <img src="/Images/nav-logo (1).png" class="mr-2" width="90">
+        </a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon alert-info"></span>
+        </button>
+
+        <div class="navbar-collapse nav  @NavMenuCssClass" @onclick="ToggleNavMenu" style="background-color: #388ED9; ">
+            <ul class="navbar-nav  mr-auto" style="font-size:13px">
+                <li class="nav-item ">
+                    <NavLink class="nav-link border-right text-white " href="~/Leads/Index"><span class="mr-2">Leads</span></NavLink>
+                </li>
+                <li class="nav-item border-right px-2">
+                    <NavLink class="nav-link   text-white" href="~/Opportunity/Index">Opportunities</NavLink>
+                </li>
+                <li class="nav-item border-right px-2">
+                    <NavLink class="nav-link   text-white" href="#">Jobs</NavLink>
+                </li>
+                <li class="nav-item dropdown  border-right px-2">
+                    <NavLink class="nav-link dropdown-toggle text-white "  @onclick="dropdown" id="navbardrop" data-toggle="dropdown">
+                        Accounting
+                    </NavLink>
+                    <div class="dropdown-menu " style="display:@drop" >
+                        <a class="dropdown-item"  href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                          
+                    </div>
+                </li>
+                <li class="nav-item dropdown  border-right px-2">
+                    <NavLink class="nav-link dropdown-toggle text-white" @onclick="dropdown2" id="navbardrop" data-toggle="dropdown">
+                        Customers
+                    </NavLink>
+                    <div class="dropdown-menu" style="display:@dropd">
+                        <a class="dropdown-item" href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown  border-right px-2">
+                    <NavLink class="nav-link dropdown-toggle text-white" id="navbardrop" data-toggle="dropdown">
+                        Inventory
+                    </NavLink>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown  border-right px-2">
+                    <NavLink class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">
+                        Dispatcher
+                    </NavLink>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline ">
+                <label class="nav-item dropdown px-3">
+                    <a class=" mr-2 dropdown-toggle text-white " href="#" id="navbardrop" data-toggle="dropdown">
+
+                    </a><span class="text-white ">ABINGTON</span>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                    </div>
+                </label>
+                <input class="pr-5 p-1 px-2" type="search" placeholder="Search anything..." style="border-radius: 40px;border: none;">
+                <a href=""><i class='fa fa-bell-o text-white ml-4'></i></a>
+                <a @onclick="Logout">
+                    <img src="/Images/blank-user-tiny.jpg" style="border-radius: 50px;width:65%" class="ml-3">
+                </a>
+                <p class="text-white text-center m-2">Depigaa SV</p>
+            </form>
+        </div>
+    </nav>
+    <!-- h-100 takes the full height of the body-->
+    <div class="row">
+        <div class=" col-lg-1">
+            <div class=" d-flex flex-column flex-shrink-0  h-100" style="width: 100px;background-color: #EEE">
+                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center ">
+                    <li class="nav-item"> <a href="#" class="nav-link mt-3 py-3" style="transition:all 0.5s;width:100px;display:flex;flex-direction:column"> <i class="fa fa-check-square-o "></i> <small>Tasks</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3"> <i class="fa fa-calendar "></i> <small>Calender</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3"> <i class="fa fa-bar-chart "></i> <small>Reports</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3" style="transition:all 0.5s;width:100px;display:flex;flex-direction:column"> <i class="fa fa-users "></i> <small class="mt-1">Users</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3"> <i class="fa fa-gear "></i> <small>Settings</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3"> <i class="fa fa-question-circle "></i> <small>Support</small> </a> </li>
+                    <li> <a href="#" class="nav-link py-3 " style="transition:all 0.5s;width:100px;display:flex;flex-direction:column"> <i class="fa fa-dashboard "></i> <small>Super Admin</small> </a> </li>
+                </ul>
+            </div>
+        </div>
+        <!--Contains the main content
+        of the webpage-->
+        <div class=" col-8 mb-5  " style="background-color: white; border-right: 1px solid lightgray">
+            <div class="row ">
+                <div class=" col-12 py-4  " style="background-image: url('/Images/tile.png'); border-bottom: 1px solid lightgray ">
+                    <span style="font-size: 30px; color: #2a2a2a;">Leads</span>
+                    <div class=" float-end ">
+                        <button type="submit" class="btn  text-white btn-warning ">View Converted</button>
+                        <button type="submit" class="btn text-white btn-warning ">View Archieved</button>
+                        <button type="submit" class="btn text-white btn-success ">Add Lead</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 ">
+                <div class="col-12 col-lg-3 py-4 pb-5 " style=" background-image: url('../../Images/tile.png'); border: 1px solid #DDD">
+                    <input class="w-100 p-1 pl-2" type="text" placeholder="Search leads..." style="font-size:15px;" disabled>
+                    <select class="form-select my-3" id="sel1" name="sellist1" style="font-size:14px">
+                        <option>Select an action..</option>
+                        <option>2</option>
+                    </select>
+                    <select class="form-select dropdown-toggle" id="sel1" name="sellist1" style="font-size:14px">
+                        <option>Select a type...</option>
+                        <option>2</option>
+                    </select>
+                    <select class="form-select my-3" id="sel1" name="sellist1" style="font-size:14px">
+                        <option>select a status...</option>
+                        <option>2</option>
+                    </select>
+                    <select class="form-select " id="sel1" name="sellist1" style="font-size:14px">
+                        <option>Selelct a sales person...</option>
+                        <option>2</option>
+                    </select>
+                    <div class="form-check my-3">
+                        <input type="checkbox" class="form-check-input">
+                        <label class="form-check-label " style="font-size:13px;margin-top:3px">Expired</label>
+                    </div>
+                    <button type="submit" class="btn btn-sm text-black" style="background: #eee; width: 55%"><i class="fa fa-download"></i> Export</button>
+                    <button type="submit" class="btn btn-sm text-white  " style="background: #368ee0; width: 43%">Filter</button>
+                </div>
+                <div class="col-12 col-lg border ml-2">
+                </div>
+            </div>
+            <div class=" border row mb-2 mx-1 ">
+                <div class="  col-6  p-3   text-center " style="background-color: #EEE;    color: #AAA;font-weight: bold; border-left:20px solid white">
+                    <span style="text-align: center;font-size: 16px;background: #ddd; padding: 4px 10px;color: #888;">1</span> Consumer
+                </div>
+                <div class="col-6 p-3  text-center  border-left" style="background-color: #EEE  ;  color: #AAA;font-weight: bold;">
+                    <span style="text-align: center;font-size: 16px;background: #ddd;padding: 4px 10px;color: #888;">11</span> Business
+                </div>
+            </div>
+            <div class="border  row mb-4 mx-1">
+                <div class="col-4 p-3   text-center " style="background-color: #EEE;    color: #AAA; font-weight: bold;border-left:20px solid white">
+                    <span style="text-align: center;font-size: 16px;background: #ddd;padding: 4px 10px;color: #888;">2</span> Quote
+                </div>
+                <div class="col-4 p-3   text-center  border-left" style="background-color: #EEE;    color: #AAA;font-weight: bold;">
+                    <span style="text-align: center;font-size: 16px;background: #ddd; padding: 4px 10px;
+        color: #888;">2</span> Follow up
+                </div>
+                <div class="col-4 p-3   text-center  border-left" style="background-color: #EEE;    color: #AAA; font-weight: bold;">
+                    <span style="text-align: center;font-size: 16px; background: #ddd;padding: 4px 10px;color: #888;">0</span> Blueprints
+                </div>
+            </div>
+            <div class="container mt-3 ">
+                <div class="input-group w-25 float-end mb-2">
+                    <input type="text" class="form-control" placeholder="Searching..."
+                           @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+
+                </div>
+                @if (lead is null)
+                {
+                    <h5>Loading......!</h5>
+                }
+                else
+                {
+
+                    <table id="example" class="display table table-bordered">
+                        <thead>
+                            <tr class="table-secondary ">
+                                <th>Name</th>
+                                <th>Project Name</th>
+                                <th>Status</th>
+                                <th>Added</th>
+                                <th>Type</th>
+                                <th>Contact</th>
+                                <th>Action</th>
+                                <th>Assignee</th>
+                                <th>Bid Date</th>
+                                <th>Operation</th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody style="border:none">
+                            @foreach (var item in lead)
+                            {
+                                <tr>
+                                    <td style=" color: #368ee0;">
+                                        <a href="LeadEdit/@item.Lid"> @item.Lname</a>
+                                    </td>
+                                    <td style="color: #368ee0;">
+                                        @item.LProject_Name
+                                    </td>
+                                    <td>
+                                        @item.LStatus
+                                    </td>
+                                    <td>
+                                        @item.LAdded
+                                    </td>
+                                    <td>
+                                        @item.LType
+                                    </td>
+                                    <td>
+                                        @item.LContact
+                                    </td>
+                                    <td>
+                                        @item.LAction
+                                    </td>
+                                    <td>
+                                        @item.LAssignee
+                                    </td>
+                                    <td>
+                                        @item.LBid_Date
+                                    </td>
+                                    <td style="display:none">
+                                        @item.Lid
+                                    </td>
+
+                                    <td>
+                                        <a @onclick="(() => Update(item))" style="cursor:pointer">
+                                            <span class="oi oi-pencil " aria-hidden="true" style="color:blue"></span>
+                                        </a>
+                                        <a @onclick="(() => Showpopup(item.Lid))" style="cursor:pointer">
+                                            <span class="oi oi-trash" aria-hidden="true" style="color:red"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>}
+                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
+            </div>
+            <hr style="height: 0.01px;color: #EEE;">
+            <div class="text-center p-2 mb-3" style=" color: #999;font-size: 10px;">© FieldGroove, LLC 2022. All Rights Reserved.</div>
+        </div>
+    </div>
+    @if (popup)
+    {
+        <div class="modal" style="display:block">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header with-border bg-light">
+                        <h3 class="box-title text-center">Update Customer</h3>
+                        <button type="button" class="btn-close" aria-label="Close" @onclick="Closepopup" data-dismiss="modal">
+                            <span>X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="height:800px">
+                        <div class="box box-primary">
+
+                            <div class="col-md-8">
+                                <EditForm class="form-group" Model="leadClass">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
+                                    <input type="hidden" @bind-value="leadClass.Lid">
+                                    <label for="exampleInputEmail1">Name :</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.Lname" required>
+                                    <label for="exampleInputEmail1">Project_Name :</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LProject_Name" required>
+                                    <label for="exampleInputEmail1">Status :</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LStatus" required>
+                                    <label for="exampleInputEmail1">Added :</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LAdded" required>
+                                    <label for="exampleInputEmail1">Type:</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LType" required>
+                                    <label for="exampleInputEmail1">Contact:</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LContact">
+                                    <label for="exampleInputEmail1">Action:</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LAction" required>
+                                    <label for="exampleInputEmail1">Assignee:</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LAssignee" required>
+                                    <label for="exampleInputEmail1">Bid_Date:</label>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LBid_Date" required>
+                                </EditForm>
+                            </div>
+                            <div class="modal-footer p-1">
+                                <button type="submit" class="btn btn-primary" data-save="modal" @onclick="(()=>submit(leadClass))">Update</button>
+                                <button type="button" class="btn btn-default border-dark" data-dismiss="modal" @onclick="Closepopup">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (modal)
+    {
+        <div class="modal " style="display:block">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-light">
+                        <h4 class="text-danger ">Delete Confirmation </h4>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Are you sure to delete?</h6>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn " @onclick="Closepopup" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger  text-white" @onclick="()=>Delete(leadClass.Lid)">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</body>
+</html>
+@code {
+    public MetaData MetaData { get; set; } = new MetaData();
+    private ProductParameters _productParameters = new ProductParameters();
+
+    protected IEnumerable<Leads> lead;
+    protected IEnumerable<Leads> leadList;
+    protected Leads leadClass = new Leads();
+    protected override async Task OnInitializedAsync()
+    {
+        await Http.GetFromJsonAsync<Leads[]>("api/Leads");
+        leadList = lead;
+        await GetProducts();
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        _productParameters.PageNumber = page;
+        await GetProducts();
+    }
+
+    private async Task GetProducts()
+    {
+        var pagingResponse = await repo.GetProducts(_productParameters);
+        lead = pagingResponse.Items;
+        MetaData = pagingResponse.MetaData;
+        leadList = lead;
+    }
+    void next()
+    {
+        navigationManager.NavigateTo("LeadEdit/{LiD}");
+    }
+    bool modal = false;
+    bool popup = false;
+    protected async void Showpopup(int Id)
+    {
+        leadClass = await Http.GetFromJsonAsync<Leads>($"api/Leads/{Id}");
+        modal = true;
+
+    }
+    void Closepopup()
+    {
+        popup = false;
+        modal = false;
+
+    }
+    protected async void Update(Leads obj)
+    {
+        leadClass = await Http.GetFromJsonAsync<Leads>($"api/Leads/{obj.Lid}");
+        popup = true;
+
+    }
+    public async void submit(Leads user)
+    {
+        await Http.PutAsJsonAsync("api/Leads", user);
+        popup = false;
+    }
+    public async void Delete(int id)
+    {
+        var result = await Http.DeleteAsync($"api/Leads/{id}");
+
+        modal = false;
+    }
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private bool dropmenu = true;
+    private string drop => dropmenu ? "none" : "block";
+    private void dropdown()
+    {
+        dropmenu = !dropmenu;
+    }
+    private bool dropmenu1 = true;
+
+    private string dropd => dropmenu1 ? "none" : "block";
+    private void dropdown2()
+    {
+        dropmenu1 = !dropmenu1;
+    }
+    void Logout()
+    {
+        navigationManager.NavigateTo("Login");
+    }
+
+    //Pagination
+    protected string SearchString { get; set; } = string.Empty;
+    protected void FilterUser()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            lead = leadList
+                .Where(x => x.Lname.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .ToList();
+        }
+        else
+        {
+            lead = leadList;
+        }
+
+    }
+    void ooo()
+    {
+        dropmenu = true;
+    }
+
+
+}
