@@ -37,5 +37,6 @@ namespace FG_Blazor_WASM.Shared.Model
         [Required]
         [Key]
         public int Lid { get; set; }
+        
     }
 }

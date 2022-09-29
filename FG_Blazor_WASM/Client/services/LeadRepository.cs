@@ -18,7 +18,6 @@ namespace FG_Blazor_WASM.Client.services
         public LeadRepository(HttpClient client, JsonSerializerOptions options)
         {
             _client = client;
-            _options = options;
         }
         public async Task<PagingResponse<Leads>> GetProducts(ProductParameters productParameters)
         {
@@ -32,10 +31,7 @@ namespace FG_Blazor_WASM.Client.services
             {
                 throw new ApplicationException(content);
             }
-            var options = new JsonSerializerOptions()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
+           
             var pagingResponse = new PagingResponse<Leads>
             {
                 Items = JsonSerializer.Deserialize<List<Leads>>(content,_options),
