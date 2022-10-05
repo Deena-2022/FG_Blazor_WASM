@@ -176,12 +176,12 @@
 @code {
     [Parameter]
     public string Lid { get; set; }
-    Leads obj = new Leads();
+    FG_Blazor_WASM.Shared.Model.Leads obj = new FG_Blazor_WASM.Shared.Model.Leads();
     protected override async Task OnInitializedAsync()
     {
-        obj = await Http.GetFromJsonAsync<Leads>($"api/Leads/{Lid}");
+        obj = await Http.GetFromJsonAsync<FG_Blazor_WASM.Shared.Model.Leads>($"api/Leads/{Lid}");
     }
-    protected async Task UpdateEmployee(Leads user)
+    protected async Task UpdateEmployee(FG_Blazor_WASM.Shared.Model.Leads user)
     {
         await Http.PutAsJsonAsync("api/Leads", user);
         navigationManager.NavigateTo("Leads");

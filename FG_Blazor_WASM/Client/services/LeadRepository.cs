@@ -13,9 +13,8 @@ namespace FG_Blazor_WASM.Client.services
     public class LeadRepository : ILeadRepository
     {
         private readonly HttpClient _client;
-        private readonly JsonSerializerOptions _options;
 
-        public LeadRepository(HttpClient client, JsonSerializerOptions options)
+        public LeadRepository(HttpClient client)
         {
             _client = client;
         }
@@ -31,11 +30,16 @@ namespace FG_Blazor_WASM.Client.services
             {
                 throw new ApplicationException(content);
             }
-           
+            JsonSerializerOptions options = new(JsonSerializerDefaults.Web)
+            {
+                WriteIndented = true
+            };
+
+            JsonSerializerOptions optionsCopy = new(options);
             var pagingResponse = new PagingResponse<Leads>
             {
-                Items = JsonSerializer.Deserialize<List<Leads>>(content,_options),
-                MetaData = JsonSerializer.Deserialize<MetaData>(response.Headers.GetValues("X-Pagination").First(),_options)
+                Items = JsonSerializer.Deserialize<List<Leads>>(content, options),
+                MetaData = JsonSerializer.Deserialize<MetaData>(response.Headers.GetValues("X-Pagination").First(), options)
             };
             return pagingResponse;
         }

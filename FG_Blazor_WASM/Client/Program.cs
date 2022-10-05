@@ -25,6 +25,7 @@ namespace FG_Blazor_WASM.Client
             builder.Services.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
             {
                 AllowTrailingCommas = true,
+             
             });
             await builder.Build().RunAsync();
         }
