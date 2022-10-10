@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Syncfusion.Blazor;
 
 namespace FG_Blazor_WASM.Client
 {
@@ -16,12 +17,13 @@ namespace FG_Blazor_WASM.Client
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzI5NTQxQDMyMzAyZTMzMmUzMEsva2ZvVC9WZXdrT3h4ZXdHRGduWWtWZzhway9RUE1BZXFtTFhhM2V5RzA9");
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);            
             builder.RootComponents.Add<App>("#app");
-
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
+            builder.Services.AddSyncfusionBlazor();
             builder.Services.AddScoped<ILeadRepository,LeadRepository>();
+
             builder.Services.AddSingleton<JsonSerializerOptions>(new JsonSerializerOptions()
             {
                 AllowTrailingCommas = true,
@@ -29,5 +31,6 @@ namespace FG_Blazor_WASM.Client
             });
             await builder.Build().RunAsync();
         }
+
     }
 }

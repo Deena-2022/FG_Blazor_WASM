@@ -16,7 +16,6 @@ namespace FG_Blazor_WASM.Client.Pages
         public int Spread { get; set; }
         [Parameter]
         public EventCallback<int> SelectedPage { get; set; }
-
         private List<PagingLink> _links;
 
         protected override void OnParametersSet()

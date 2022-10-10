@@ -5,6 +5,9 @@
 @inject IJSRuntime JSRuntime
 @inject FG_Blazor_WASM.Client.services.ILeadRepository repo 
 @using FG_Blazor_WASM.Shared.Model
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Data
 
 <!DOCTYPE html>
 <html>
@@ -151,6 +154,7 @@
     </nav>
     <!-- h-100 takes the full height of the body-->
     <div class="row">
+        
         <div class=" col-lg-1">
             <div class=" d-flex flex-column flex-shrink-0  h-100" style="width: 100px;background-color: #EEE">
                 <ul class="nav nav-pills nav-flush flex-column mb-auto text-center ">
@@ -165,7 +169,7 @@
             </div>
         </div>
         <!--Contains the main content
-        of the webpage-->
+    of the webpage-->
         <div class=" col-8 mb-5  " style="background-color: white; border-right: 1px solid lightgray">
             <div class="row ">
                 <div class=" col-12 py-4  " style="background-image: url('/Images/tile.png'); border-bottom: 1px solid lightgray ">
@@ -204,6 +208,7 @@
                     <button type="submit" class="btn btn-sm text-white  " style="background: #368ee0; width: 43%">Filter</button>
                 </div>
                 <div class="col-12 col-lg border ml-2">
+                    
                 </div>
             </div>
             <div class=" border row mb-2 mx-1 ">
@@ -303,9 +308,14 @@
                             }
                         </tbody>
 
-                    </table>}
+                    </table>
+                    <SfGrid TValue="Leads">
+                        <SfDataManager Url="    "></SfDataManager>
+                    </SfGrid>
+                    }
                 <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
             </div>
+
             <hr style="height: 0.01px;color: #EEE;">
             <div class="text-center p-2 mb-3" style=" color: #999;font-size: 10px;">© FieldGroove, LLC 2022. All Rights Reserved.</div>
         </div>
@@ -385,7 +395,7 @@
 @code {
     public MetaData MetaData { get; set; } = new MetaData();
     private ProductParameters _productParameters = new ProductParameters();
-
+    public int TotalPages { get; set; }
     protected IEnumerable<FG_Blazor_WASM.Shared.Model.Leads> lead;
     protected IEnumerable<FG_Blazor_WASM.Shared.Model.Leads> leadList;
     protected FG_Blazor_WASM.Shared.Model.Leads leadClass = new FG_Blazor_WASM.Shared.Model.Leads();
@@ -393,7 +403,9 @@
     {
         await Http.GetFromJsonAsync<FG_Blazor_WASM.Shared.Model.Leads[]>("api/Leads");
         leadList = lead;
+
         await GetProducts();
+        
     }
 
     private async Task SelectedPage(int page)

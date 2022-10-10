@@ -1,0 +1,39 @@
+﻿@page "/Upload"
+@using System.IO
+<h3>FileUpload</h3>
+<SfUploader ID="UploadFiles" >
+    <UploaderAsyncSettings SaveUrl="api/SampleData/Save"
+                           RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
+    <UploaderEvents BeforeRemove="BeforeRemove"></UploaderEvents>
+    @*<UploaderEvents ValueChange="OnChange"
+        OnRemove="OnRemove"></UploaderEvents>*@
+</SfUploader>
+
+@code{
+    private void BeforeRemove(BeforeRemoveEventArgs args)
+    {
+        args.PostRawFile = false;
+    }
+
+    private void OnChange(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            var path = @"wwwroot\" + file.FileInfo.Name;
+            FileStream filestream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            file.Stream.WriteTo(filestream);
+            filestream.Close();
+            file.Stream.Close();
+        }
+    }
+    private void OnRemove(RemovingEventArgs args)
+    {
+        foreach (var removeFile in args.FilesData)
+        {
+            if (File.Exists(Path.Combine(@"wwwroot\", removeFile.Name)))
+            {
+                File.Delete(Path.Combine(@"wwwroot\", removeFile.Name));
+            }
+        }
+    }
+}
