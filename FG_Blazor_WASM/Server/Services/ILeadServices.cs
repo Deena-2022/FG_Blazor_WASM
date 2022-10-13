@@ -11,6 +11,7 @@ namespace FG_Blazor_WASM.Server.Services
 {
         Task<PagedList<Leads>> GetProducts(ProductParameters productParameters);
         public void Update(Leads user);
+        public Task Add(Leads user);
 
         public Leads GetById(int id);
 

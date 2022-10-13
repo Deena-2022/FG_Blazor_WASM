@@ -40,8 +40,12 @@ public class LeadsController : ControllerBase
             return NotFound();
         }
 
- 
 
+        [HttpPost]
+        public void Post(Leads user)
+        {
+            services.Add(user);
+        }
         [HttpPut]
         public void Put(Leads user)
         {

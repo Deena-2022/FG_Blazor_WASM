@@ -3,15 +3,19 @@
 @inject NavigationManager navigationManager
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
-@inject FG_Blazor_WASM.Client.services.ILeadRepository repo 
+@inject FG_Blazor_WASM.Client.services.ILeadRepository repo
 @using FG_Blazor_WASM.Shared.Model
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using System.ComponentModel.DataAnnotations
 
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>LEADS</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,55 +26,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.0/css/dataTables.bootstrap5.min.css" />
-
     <link href="~/Scripts/free-jqGrid/plugins/css/ui.multiselect.css" rel="stylesheet" />
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-          crossorigin="anonymous">
-    <style>
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"crossorigin="anonymous">
 
-        body {
-            background-image: url('/Images/header-tile.png');
-            font-family: "Open Sans", sans-serif;
-            font-size: 13px !important;
-            width: 99%
-        }
-       @* .odd{
-            display:none;
-        }*@
-        .nav-link {
-            border-radius: 0px !important;
-        }
+<style>
 
-            .nav-link small {
-                font-size: 10px;
-                color: rgb(90, 89, 89);
-            }
+    body
+    {
+        background-image: url('/Images/header-tile.png');
+        font-family: "Open Sans", sans-serif;
+        font-size: 13px !important;
+        width: 99%
+    }
+ 
+    .nav-link
+    {
+        border-radius: 0px !important;
+    }
 
-            .nav-link:hover {
-                background-color: #52525240 !important
-            }
+    .nav-link small 
+    {
+        font-size: 10px;
+        color: rgb(90, 89, 89);
+    }
 
-            .nav-link .fa {
-                transition: all 1s;
-                font-size: 35px;
-                color: rgb(90, 89, 89);
-            }
+    .nav-link:hover 
+    {
+        background-color: #52525240 !important
+    }
 
-        .modal form {
-            color: #5c78bf;
-            font-size: 17px;
-            font-family: 'Times New Roman', Times, serif;
-            font-weight: 500
-        }
+    .nav-link .fa
+    {
+        transition: all 1s;
+        font-size: 35px;
+        color: rgb(90, 89, 89);
+    }
 
-        .modal h3 {
-            color: blueviolet
-        }
-    </style>
+    .modal form 
+    {
+        color: #5c78bf;
+        font-size: 17px;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: 500
+    }
+
+    .modal h3 
+    {
+        color: blueviolet
+    }
+
+</style>
 </head>
-<body onload="TestDataTablesRemove('#example')">
+<body >
     <nav class="navbar navbar-expand-lg p-0" style="background-color: #388ED9;width:102%">
         <a class="navbar-brand border-right " href="#">
             <img src="/Images/nav-logo (1).png" class="mr-2" width="90">
@@ -91,14 +99,14 @@
                     <NavLink class="nav-link   text-white" href="#">Jobs</NavLink>
                 </li>
                 <li class="nav-item dropdown  border-right px-2">
-                    <NavLink class="nav-link dropdown-toggle text-white "  @onclick="dropdown" id="navbardrop" data-toggle="dropdown">
+                    <NavLink class="nav-link dropdown-toggle text-white " @onclick="dropdown" id="navbardrop" data-toggle="dropdown">
                         Accounting
                     </NavLink>
-                    <div class="dropdown-menu " style="display:@drop" >
-                        <a class="dropdown-item"  href="#">Link 1</a>
+                    <div class="dropdown-menu " style="display:@drop">
+                        <a class="dropdown-item" href="#">Link 1</a>
                         <a class="dropdown-item" href="#">Link 2</a>
                         <a class="dropdown-item" href="#">Link 3</a>
-                          
+
                     </div>
                 </li>
                 <li class="nav-item dropdown  border-right px-2">
@@ -154,7 +162,6 @@
     </nav>
     <!-- h-100 takes the full height of the body-->
     <div class="row">
-        
         <div class=" col-lg-1">
             <div class=" d-flex flex-column flex-shrink-0  h-100" style="width: 100px;background-color: #EEE">
                 <ul class="nav nav-pills nav-flush flex-column mb-auto text-center ">
@@ -169,7 +176,7 @@
             </div>
         </div>
         <!--Contains the main content
-    of the webpage-->
+        of the webpage-->
         <div class=" col-8 mb-5  " style="background-color: white; border-right: 1px solid lightgray">
             <div class="row ">
                 <div class=" col-12 py-4  " style="background-image: url('/Images/tile.png'); border-bottom: 1px solid lightgray ">
@@ -208,7 +215,7 @@
                     <button type="submit" class="btn btn-sm text-white  " style="background: #368ee0; width: 43%">Filter</button>
                 </div>
                 <div class="col-12 col-lg border ml-2">
-                    
+
                 </div>
             </div>
             <div class=" border row mb-2 mx-1 ">
@@ -239,11 +246,10 @@
                 </div>
                 @if (lead is null)
                 {
-                    <h5>Loading......!</h5>
+                    <h5 class="text-success">Loading......!</h5>
                 }
                 else
                 {
-
                     <table id="example" class="display table table-bordered">
                         <thead>
                             <tr class="table-secondary ">
@@ -259,8 +265,6 @@
                                 <th>Operation</th>
                             </tr>
                         </thead>
-
-
                         <tbody style="border:none">
                             @foreach (var item in lead)
                             {
@@ -309,13 +313,46 @@
                         </tbody>
 
                     </table>
-                    <SfGrid TValue="Leads">
-                        <SfDataManager Url="    "></SfDataManager>
-                    </SfGrid>
-                    }
-                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage" />
-            </div>
 
+                }
+                <PaginationLead MetaData="MetaData" Spread="2" SelectedPage="SelectedPage"  />
+            </div>
+            <SfGrid @ref="leadGrid" TValue="Leads" DataSource="@lead" AllowSorting="true" Toolbar="@(new List<string>(){"Add","Edit","Delete"})"
+                     AllowPaging="true">
+             <SfDataManager Url=""></SfDataManager>
+                <GridEvents TValue="Leads" OnActionBegin="ActionBeginHandler"></GridEvents>
+                <GridPageSettings PageSizes=true></GridPageSettings>
+                <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams" >
+                    <HeaderTemplate>@GetHeaderText(context as Leads)</HeaderTemplate>
+                    <FooterTemplate>
+                        <SfButton OnClick="Save" IsPrimary="true">@SaveButton</SfButton>
+                        <SfButton OnClick="@Cancel">Cancel</SfButton>
+                    </FooterTemplate>
+                </GridEditSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(leadClass.Lid) HeaderText="ID" Visible=false IsPrimaryKey=true></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.Lname) HeaderText="Name"
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z''-'\s]{1,40}$" })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LProject_Name) HeaderText="Project Name" 
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z0-9''-'\s]{1,40}$" })">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LStatus) HeaderText="Status"
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z0-9''-'\s]{1,40}$" })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LAdded) HeaderText="Added"
+                                ValidationRules="@(new ValidationRules{ Required= true })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LType) HeaderText="Type" 
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z0-9''-'\s]{1,40}$" })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LContact) HeaderText="Contact"
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^([0-9]{10})$" })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LAction) HeaderText="Action" 
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z''-'\s]{1,40}$"})"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LAssignee) HeaderText="Assignee"
+                                ValidationRules="@(new ValidationRules{ Required= true, RegexPattern=@"^[a-zA-Z''-'\s]{1,40}$" })"></GridColumn>
+                    <GridColumn Field=@nameof(leadClass.LBid_Date) HeaderText="Bid Date"
+                                ValidationRules="@(new ValidationRules { Required = true })"></GridColumn>
+                </GridColumns>
+
+            </SfGrid>
             <hr style="height: 0.01px;color: #EEE;">
             <div class="text-center p-2 mb-3" style=" color: #999;font-size: 10px;">© FieldGroove, LLC 2022. All Rights Reserved.</div>
         </div>
@@ -348,7 +385,7 @@
                                     <label for="exampleInputEmail1">Added :</label>
                                     <input type="text" class="form-control" @bind-value="leadClass.LAdded" required>
                                     <label for="exampleInputEmail1">Type:</label>
-                                    <input type="text" class="form-control" @bind-value="leadClass.LType" required>
+                                    <input type="text" class="form-control" @bind-value="leadClass.LType"  required>
                                     <label for="exampleInputEmail1">Contact:</label>
                                     <input type="text" class="form-control" @bind-value="leadClass.LContact">
                                     <label for="exampleInputEmail1">Action:</label>
@@ -393,6 +430,7 @@
 </body>
 </html>
 @code {
+    SfGrid<Leads> leadGrid { get; set; }
     public MetaData MetaData { get; set; } = new MetaData();
     private ProductParameters _productParameters = new ProductParameters();
     public int TotalPages { get; set; }
@@ -401,11 +439,10 @@
     protected FG_Blazor_WASM.Shared.Model.Leads leadClass = new FG_Blazor_WASM.Shared.Model.Leads();
     protected override async Task OnInitializedAsync()
     {
-        await Http.GetFromJsonAsync<FG_Blazor_WASM.Shared.Model.Leads[]>("api/Leads");
         leadList = lead;
 
         await GetProducts();
-        
+
     }
 
     private async Task SelectedPage(int page)
@@ -425,6 +462,7 @@
     {
         navigationManager.NavigateTo("LeadEdit/{LiD}");
     }
+
     bool modal = false;
     bool popup = false;
     protected async void Showpopup(int Id)
@@ -433,23 +471,26 @@
         modal = true;
 
     }
+
     void Closepopup()
     {
         popup = false;
         modal = false;
-
     }
+
     protected async void Update(FG_Blazor_WASM.Shared.Model.Leads obj)
     {
         leadClass = await Http.GetFromJsonAsync<FG_Blazor_WASM.Shared.Model.Leads>($"api/Leads/{obj.Lid}");
         popup = true;
 
     }
+
     public async void submit(FG_Blazor_WASM.Shared.Model.Leads user)
     {
         await Http.PutAsJsonAsync("api/Leads", user);
         popup = false;
     }
+
     public async void Delete(int id)
     {
         var result = await Http.DeleteAsync($"api/Leads/{id}");
@@ -478,12 +519,12 @@
     {
         dropmenu1 = !dropmenu1;
     }
+
     void Logout()
     {
         navigationManager.NavigateTo("Login");
     }
 
-    //Pagination
     protected string SearchString { get; set; } = string.Empty;
     protected void FilterUser()
     {
@@ -499,10 +540,58 @@
         }
 
     }
+
     void ooo()
     {
         dropmenu = true;
     }
+    public string GetHeaderText(Leads lead)
+    {
+        if (lead.Lid == 0)
+        {
+            SaveButton = "Add";
+            return "Add New Customer";
+        }
+        else
+        {
+            SaveButton = "Update";
+            return $"Edit {lead.Lname} Details";
+        }
+    }
+    public async Task Cancel()
+    {
+        await leadGrid.CloseEditAsync();
+    }
+    public async void Save()
+    {
 
+        await leadGrid.EndEditAsync();
+    }
+    public string SaveButton;
 
+    private async void ActionBeginHandler(ActionEventArgs<Leads> args)
+    {
+
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await Http.PostAsJsonAsync<Leads>("api/Leads", args.Data);
+                await GetProducts();
+            }
+            else if (args.Action == "Delete")
+            {
+                await GetProducts();
+            }
+            else
+            {
+                await Http.PutAsJsonAsync<Leads>("api/Leads", args.Data);
+            }
+        }
+    }
+    private DialogSettings DialogParams = new DialogSettings { MinHeight = "400px", Width = "450px" };
+    public class CustomValidationName : ValidationAttribute
+    {
+
+    }
 }

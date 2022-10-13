@@ -14,9 +14,15 @@ namespace FG_Blazor_WASM.Server.Services
     {
         private readonly FGDbContext _context;
 
-        public LeadServices(FGDbContext context)
+        public LeadServices(FGDbContext contextdb)
         {
-            _context = context;
+            _context = contextdb;
+        }
+
+        public  async Task Add(Leads user)
+        {
+            _context.Add(user);
+             await _context.SaveChangesAsync();
         }
 
         public void Delete(int id)
@@ -33,8 +39,6 @@ namespace FG_Blazor_WASM.Server.Services
                 throw new ArgumentNullException();
             }
         }
-
-       
 
         public Leads GetById(int id)
         {
@@ -57,12 +61,12 @@ namespace FG_Blazor_WASM.Server.Services
                 .ToPagedList(products, productParameters.PageNumber, productParameters.PageSize);
         }
 
-        public void Update(Leads user)
+        public  void Update(Leads user)
         {
             try
             {
                 _context.Entry(user).State = EntityState.Modified;
-                _context.SaveChanges();
+                 _context.SaveChanges();
             }
             catch
             {
